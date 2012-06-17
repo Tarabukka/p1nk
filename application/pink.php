@@ -1,10 +1,6 @@
 <?php
 	if(!defined('ON_PAGE')) die('Direct script access is not allowed.');
 	
-	// Load classes
-	require_once('config.php');
-	require_once('db.php');
-	
 	class PinkController {
 		protected $request;
 		
@@ -60,34 +56,34 @@ CONTENT
 	class Pink {
 		public static function Autoload($name) {
 			if(substr($name, -4, 4) == 'View') {
-				require_once(VIEWS_PATH . substr($name, 0, -4) . '.php');
+				require_once(VIEWS_PATH . strtolower(substr($name, 0, -4)) . '.php');
 			}
 			else if(substr($name, -5, 5) == 'Model') {
-				require_once(MODELS_PATH . substr($name, 0, -5) . '.php');
+				require_once(MODELS_PATH . strtolower(substr($name, 0, -5)) . '.php');
 			}
 			else if(substr($name, -10, 10) == 'Controller') {
-				require_once(CONTROLLERS_PATH . substr($name, 0, -10) . '.php');
+				require_once(CONTROLLERS_PATH . strtolower(substr($name, 0, -10)) . '.php');
 			}
 			else if(substr($name, 0, 4) == 'Pink') { // lol namespacing
-				require_once(MODULES_PATH . substr($name, 4) . '.php');
+				require_once(MODULES_PATH . strtolower(substr($name, 4)) . '.php');
 			}
 		}
 		
 		public static function Bootstrap() {
+			// Set up autoload
+			spl_autoload_register('Pink::Autoload');
+			
 			// Set timezone
-			date_default_timezone_set(Config::TIMEZONE);
+			date_default_timezone_set(PinkConfig::TIMEZONE);
 			
 			// Set locale
 			setlocale(LC_ALL, 'en_US.utf8');
 			
-			// Set up autoload
-			spl_autoload_register('Pink::Autoload');
-			
 			// Set request values
 			$request = '';
 			
-			if(array_key_exists(Config::QUERY_PARAM, $_REQUEST)) {
-				$request = $_REQUEST[Config::QUERY_PARAM];
+			if(array_key_exists(PinkConfig::QUERY_PARAM, $_REQUEST)) {
+				$request = $_REQUEST[PinkConfig::QUERY_PARAM];
 			}
 			else {
 				$request = '/';
